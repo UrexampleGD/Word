@@ -12,8 +12,8 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = game.CoreGui
 
 local Main = Instance.new("Frame", ScreenGui)
-Main.Size = UDim2.new(0, 450, 0, 500)
-Main.Position = UDim2.new(0.5, -225, 0.5, -250)
+Main.Size = UDim2.new(0, 380, 0, 430)
+Main.Position = UDim2.new(0.5, -190, 0.5, -215)
 Main.Active = true
 Main.Draggable = true
 Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 16)
@@ -38,7 +38,7 @@ Title.BackgroundTransparency = 1
 Title.Text = "Trick/Curse Word Suggestion"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 20
+Title.TextSize = 19
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
 local Box = Instance.new("TextBox", Main)
@@ -103,10 +103,10 @@ local function Suggest(prefix)
     for _,w in ipairs(possible) do
         count += 1
         local B = Instance.new("TextButton", List)
-        B.Size = UDim2.new(1, -10, 0, 35)
+        B.Size = UDim2.new(1, -10, 0, 32)
         B.BackgroundColor3 = Color3.fromRGB(100, 30, 160)
         B.TextColor3 = Color3.fromRGB(255, 255, 255)
-        B.TextSize = 16
+        B.TextSize = 15
         B.Font = Enum.Font.Gotham
         B.Text = w
         Instance.new("UICorner", B).CornerRadius = UDim.new(0, 8)
