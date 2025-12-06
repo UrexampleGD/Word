@@ -1,7 +1,7 @@
 --#Made by Trick/Curse
 --#Crediting Cao Mod also.
 --#Script made by Curse
---GUI made by Trick
+--#GUI made by Trick
 
 -- DO NOT DELETE THIS. IF YOU DELETE THIS THIS SCRIPT WILL NOT WORK!! --
 local DictionaryURL = "https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt"
@@ -12,18 +12,18 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = game.CoreGui
 
 local Main = Instance.new("Frame", ScreenGui)
-Main.Size = UDim2.new(0, 300, 0, 240) -- <<< SMALLER SIZE LIKE YOU WANT
+Main.Size = UDim2.new(0, 300, 0, 240)
 Main.Position = UDim2.new(0.5, -150, 0.5, -120)
 Main.Active = true
 Main.Draggable = true
 Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 12)
 
--- Gradient Part --
+-- Gradientation Part --
 local Gradient = Instance.new("UIGradient", Main)
 Gradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(50,0,80)),
-    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(120,0,200)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(70,0,150))
+	ColorSequenceKeypoint.new(0, Color3.fromRGB(50,0,80)),
+	ColorSequenceKeypoint.new(0.5, Color3.fromRGB(120,0,200)),
+	ColorSequenceKeypoint.new(1, Color3.fromRGB(70,0,150))
 }
 Gradient.Rotation = 45
 
@@ -48,6 +48,7 @@ Box.BackgroundColor3 = Color3.fromRGB(80, 20, 120)
 Box.TextColor3 = Color3.fromRGB(255, 255, 255)
 Box.TextSize = 14
 Box.PlaceholderText = "Type shortcutted things okay?"
+Box.ClearTextOnFocus = false
 Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 8)
 
 local List = Instance.new("ScrollingFrame", Main)
@@ -62,65 +63,73 @@ local UIList = Instance.new("UIListLayout", List)
 UIList.Padding = UDim.new(0, 4)
 UIList.SortOrder = Enum.SortOrder.LayoutOrder
 
--- Load words (This a extra word test, dw) --
 local Words = {}
-local ExtraWords = {"bruh","yeet","pog","sus","lol","noob","cool","wow","game","play","curse","trick","haunt","ghost","spooky"}
 
--- Rlly? Do I have to explain this? --
+-- This is for hat URL inside data, where words are there. --
 task.spawn(function()
-    local data = game:HttpGet(DictionaryURL)
-    for word in data:gmatch("%S+") do
-        table.insert(Words, word:lower())
-    end
+	local data = game:HttpGet(DictionaryURL)
+	for word in data:gmatch("%S+") do
+		table.insert(Words, word:lower())
+	end
 end)
 
--- Clear when you delete text on textbox --
+-- Will clear the buttons after you deleted text in box --
 local function Clear()
-    for _,v in ipairs(List:GetChildren()) do
-        if v:IsA("TextButton") then v:Destroy() end
-    end
+	for _,v in ipairs(List:GetChildren()) do
+		if v:IsA("TextButton") then v:Destroy() end
+	end
 end
 
--- Suggestion Button Part --
+-- Shuffle, randomized. --
+local function Shuffle(t)
+	for i = #t, 2, -1 do
+		local j = math.random(1,i)
+		t[i], t[j] = t[j], t[i]
+	end
+end
+
+-- Word Suggestion Part --
 local function Suggest(prefix)
-    Clear()
-    if #prefix < 1 then return end
-    local lower = prefix:lower()
-    local possible = {}
+	Clear()
+	if #prefix < 1 then return end
+	local lower = prefix:lower()
+	local possible = {}
 
-    for _,w in ipairs(Words) do
-        if w:sub(1,#lower) == lower then
-            table.insert(possible, w)
-        end
-    end
-    for _,w in ipairs(ExtraWords) do
-        if w:sub(1,#lower) == lower then
-            table.insert(possible, w)
-        end
-    end
+	for _,w in ipairs(Words) do
+		if w:sub(1,#lower) == lower then
+			table.insert(possible, w)
+		end
+	end
 
-    local count = 0
-    for _,w in ipairs(possible) do
-        count += 1
-        local B = Instance.new("TextButton", List)
-        B.Size = UDim2.new(1, -8, 0, 26)
-        B.BackgroundColor3 = Color3.fromRGB(100, 30, 160)
-        B.TextColor3 = Color3.fromRGB(255, 255, 255)
-        B.TextSize = 14
-        B.Font = Enum.Font.Gotham
-        B.Text = w
-        Instance.new("UICorner", B).CornerRadius = UDim.new(0, 6)
-        B.MouseButton1Click:Connect(function()
-            Box.Text = w
-            Clear()
-        end)
-        if count >= 50 then break end
-    end
+	if #possible == 0 then return end
 
-    List.CanvasSize = UDim2.new(0,0,0,UIList.AbsoluteContentSize.Y + 8)
+	Shuffle(possible)
+
+	local amount = 0
+	for _,w in ipairs(possible) do
+		amount += 1
+		local B = Instance.new("TextButton", List)
+		B.Size = UDim2.new(1, -8, 0, 26)
+		B.BackgroundColor3 = Color3.fromRGB(100, 30, 160)
+		B.TextColor3 = Color3.fromRGB(255, 255, 255)
+		B.TextSize = 14
+		B.Font = Enum.Font.Gotham
+		B.Text = w
+		Instance.new("UICorner", B).CornerRadius = UDim.new(0, 6)
+
+		B.MouseButton1Click:Connect(function()
+			Box.Text = w
+			Clear()
+		end)
+
+		if amount >= 70 then break end -- Change the 50 but dont add too high or it will break --
+	end
+
+	List.CanvasSize = UDim2.new(0,0,0,UIList.AbsoluteContentSize.Y + 8)
 end
 
--- Detects typing --
+-- Functional Detection --
 Box:GetPropertyChangedSignal("Text"):Connect(function()
-    Suggest(Box.Text)
+	Suggest(Box.Text)
 end)
+
