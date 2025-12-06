@@ -12,11 +12,11 @@ ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = game.CoreGui
 
 local Main = Instance.new("Frame", ScreenGui)
-Main.Size = UDim2.new(0, 380, 0, 430)
-Main.Position = UDim2.new(0.5, -190, 0.5, -215)
+Main.Size = UDim2.new(0, 300, 0, 240) -- <<< SMALLER SIZE LIKE YOU WANT
+Main.Position = UDim2.new(0.5, -150, 0.5, -120)
 Main.Active = true
 Main.Draggable = true
-Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 16)
+Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 12)
 
 -- Gradient Part --
 local Gradient = Instance.new("UIGradient", Main)
@@ -32,34 +32,34 @@ stroke.Thickness = 2
 stroke.Color = Color3.fromRGB(200, 100, 255)
 
 local Title = Instance.new("TextLabel", Main)
-Title.Size = UDim2.new(1, -20, 0, 40)
-Title.Position = UDim2.new(0, 10, 0, 10)
+Title.Size = UDim2.new(1, -20, 0, 30)
+Title.Position = UDim2.new(0, 10, 0, 5)
 Title.BackgroundTransparency = 1
 Title.Text = "Trick/Curse Word Suggestion"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 19
+Title.TextSize = 16
 Title.TextXAlignment = Enum.TextXAlignment.Left
 
 local Box = Instance.new("TextBox", Main)
-Box.Size = UDim2.new(1, -20, 0, 40)
-Box.Position = UDim2.new(0, 10, 0, 60)
+Box.Size = UDim2.new(1, -20, 0, 30)
+Box.Position = UDim2.new(0, 10, 0, 40)
 Box.BackgroundColor3 = Color3.fromRGB(80, 20, 120)
 Box.TextColor3 = Color3.fromRGB(255, 255, 255)
-Box.TextSize = 18
+Box.TextSize = 14
 Box.PlaceholderText = "Type shortcutted things okay?"
 Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 8)
 
 local List = Instance.new("ScrollingFrame", Main)
-List.Size = UDim2.new(1, -20, 1, -120)
-List.Position = UDim2.new(0, 10, 0, 110)
+List.Size = UDim2.new(1, -20, 1, -80)
+List.Position = UDim2.new(0, 10, 0, 75)
 List.BackgroundTransparency = 0.5
 List.BackgroundColor3 = Color3.fromRGB(60, 0, 100)
-List.ScrollBarThickness = 8
+List.ScrollBarThickness = 6
 List.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
 local UIList = Instance.new("UIListLayout", List)
-UIList.Padding = UDim.new(0, 6)
+UIList.Padding = UDim.new(0, 4)
 UIList.SortOrder = Enum.SortOrder.LayoutOrder
 
 -- Load words (This a extra word test, dw) --
@@ -103,21 +103,21 @@ local function Suggest(prefix)
     for _,w in ipairs(possible) do
         count += 1
         local B = Instance.new("TextButton", List)
-        B.Size = UDim2.new(1, -10, 0, 32)
+        B.Size = UDim2.new(1, -8, 0, 26)
         B.BackgroundColor3 = Color3.fromRGB(100, 30, 160)
         B.TextColor3 = Color3.fromRGB(255, 255, 255)
-        B.TextSize = 15
+        B.TextSize = 14
         B.Font = Enum.Font.Gotham
         B.Text = w
-        Instance.new("UICorner", B).CornerRadius = UDim.new(0, 8)
+        Instance.new("UICorner", B).CornerRadius = UDim.new(0, 6)
         B.MouseButton1Click:Connect(function()
             Box.Text = w
             Clear()
         end)
-        if count >= 100 then break end -- Change the 100 to a amount of numbers to break the word, don't add too much numbers or it will break! --
+        if count >= 50 then break end
     end
 
-    List.CanvasSize = UDim2.new(0,0,0,UIList.AbsoluteContentSize.Y + 10)
+    List.CanvasSize = UDim2.new(0,0,0,UIList.AbsoluteContentSize.Y + 8)
 end
 
 -- Detects typing --
