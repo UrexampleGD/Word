@@ -47,8 +47,9 @@ Box.Position = UDim2.new(0, 10, 0, 40)
 Box.BackgroundColor3 = Color3.fromRGB(80, 20, 120)
 Box.TextColor3 = Color3.fromRGB(255, 255, 255)
 Box.TextSize = 14
+Box.Text = " "
 Box.PlaceholderText = "Type shortcutted things okay?"
-Box.ClearTextOnFocus = false
+Box.ClearTextOnFocus = true
 Instance.new("UICorner", Box).CornerRadius = UDim.new(0, 8)
 
 local List = Instance.new("ScrollingFrame", Main)
