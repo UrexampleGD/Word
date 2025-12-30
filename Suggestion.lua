@@ -20,7 +20,6 @@ Main.Active = true
 Main.Draggable = true
 Instance.new("UICorner", Main).CornerRadius = UDim.new(0, 12)
 
--- Gradientation Part --
 local Gradient = Instance.new("UIGradient", Main)
 Gradient.Color = ColorSequence.new{
 	ColorSequenceKeypoint.new(0, Color3.fromRGB(50,0,80)),
@@ -67,8 +66,8 @@ UIList.Padding = UDim.new(0, 6)
 UIList.SortOrder = Enum.SortOrder.LayoutOrder
 
 local Words = {}
+local Locked = false
 
--- This is for hat URL inside data, where words are there. --
 task.spawn(function()
 	local data = game:HttpGet(DictionaryURL)
 	for word in data:gmatch("%S+") do
@@ -76,7 +75,6 @@ task.spawn(function()
 	end
 end)
 
--- Will clear the buttons after you deleted text in box --
 local function Clear()
 	for _,v in ipairs(List:GetChildren()) do
 		if v:IsA("GuiObject") and not v:IsA("UIListLayout") then
@@ -85,7 +83,6 @@ local function Clear()
 	end
 end
 
--- Shuffle, randomized. --
 local function Shuffle(t)
 	for i = #t, 2, -1 do
 		local j = math.random(1,i)
@@ -94,15 +91,17 @@ local function Shuffle(t)
 end
 
 local function ShowMeaning(word)
+	Locked = true
 	Clear()
 
 	local Label = Instance.new("TextLabel", List)
-	Label.Size = UDim2.new(1, -10, 0, 0)
+	Label.Size = UDim2.new(1, -12, 0, 0)
+	Label.Position = UDim2.new(0, 6, 0, 0)
 	Label.AutomaticSize = Enum.AutomaticSize.Y
 	Label.BackgroundTransparency = 1
 	Label.TextWrapped = true
-	Label.TextXAlignment = Enum.TextXAlignment.Left
-	Label.TextYAlignment = Enum.TextYAlignment.Top
+	Label.TextXAlignment = Enum.TextXAlignment.Center
+	Label.TextYAlignment = Enum.TextYAlignment.Center
 	Label.Font = Enum.Font.Gotham
 	Label.TextSize = 14
 	Label.TextColor3 = Color3.fromRGB(255,255,255)
@@ -136,15 +135,15 @@ local function ShowMeaning(word)
 		end
 
 		if meaning then
-			Label.Text = word .. ":\n\n" .. meaning
+			Label.Text = word .. "\n\n" .. meaning
 		else
-			Label.Text = word .. ":\n\nNo definition available."
+			Label.Text = word .. "\n\nNo definition available."
 		end
 	end)
 end
 
--- Word Suggestion Part --
 local function Suggest(prefix)
+	if Locked then return end
 	Clear()
 	if #prefix < 1 then return end
 	local lower = prefix:lower()
@@ -181,7 +180,8 @@ local function Suggest(prefix)
 	end
 end
 
--- Functional Detection --
 Box:GetPropertyChangedSignal("Text"):Connect(function()
+	Locked = false
 	Suggest(Box.Text)
 end)
+
