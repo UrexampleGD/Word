@@ -1,6 +1,6 @@
---#Made by Trick/Curse
+--#Made by OddLinker and Trick
 --#Crediting Cao Mod also.
---#Script made by Curse
+--#Script (URL and API) paster ItzVance
 --#GUI made by Trick
 
 -- DO NOT DELETE THIS. IF YOU DELETE THIS THIS SCRIPT WILL NOT WORK!! --
