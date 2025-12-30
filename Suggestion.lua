@@ -6,6 +6,8 @@
 -- DO NOT DELETE THIS. IF YOU DELETE THIS THIS SCRIPT WILL NOT WORK!! --
 local DictionaryURL = "https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt"
 
+local HttpService = game:GetService("HttpService")
+
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "Nigga"
 ScreenGui.ResetOnSpawn = false
@@ -61,7 +63,7 @@ List.ScrollBarThickness = 6
 List.AutomaticCanvasSize = Enum.AutomaticSize.Y
 
 local UIList = Instance.new("UIListLayout", List)
-UIList.Padding = UDim.new(0, 4)
+UIList.Padding = UDim.new(0, 6)
 UIList.SortOrder = Enum.SortOrder.LayoutOrder
 
 local Words = {}
@@ -77,7 +79,9 @@ end)
 -- Will clear the buttons after you deleted text in box --
 local function Clear()
 	for _,v in ipairs(List:GetChildren()) do
-		if v:IsA("TextButton") then v:Destroy() end
+		if v:IsA("GuiObject") and not v:IsA("UIListLayout") then
+			v:Destroy()
+		end
 	end
 end
 
@@ -87,6 +91,56 @@ local function Shuffle(t)
 		local j = math.random(1,i)
 		t[i], t[j] = t[j], t[i]
 	end
+end
+
+local function ShowMeaning(word)
+	Clear()
+
+	local Label = Instance.new("TextLabel", List)
+	Label.Size = UDim2.new(1, -10, 0, 0)
+	Label.AutomaticSize = Enum.AutomaticSize.Y
+	Label.BackgroundTransparency = 1
+	Label.TextWrapped = true
+	Label.TextXAlignment = Enum.TextXAlignment.Left
+	Label.TextYAlignment = Enum.TextYAlignment.Top
+	Label.Font = Enum.Font.Gotham
+	Label.TextSize = 14
+	Label.TextColor3 = Color3.fromRGB(255,255,255)
+	Label.Text = "Loading meaning..."
+
+	task.spawn(function()
+		local meaning
+
+		local ok1, res1 = pcall(function()
+			return game:HttpGet("https://api.dictionaryapi.dev/api/v2/entries/en/" .. word)
+		end)
+
+		if ok1 then
+			local data = HttpService:JSONDecode(res1)
+			if data and data[1] and data[1].meanings and data[1].meanings[1] and data[1].meanings[1].definitions and data[1].meanings[1].definitions[1] then
+				meaning = data[1].meanings[1].definitions[1].definition
+			end
+		end
+
+		if not meaning then
+			local ok2, res2 = pcall(function()
+				return game:HttpGet("https://api.datamuse.com/words?sp=" .. word .. "&md=d&max=1")
+			end)
+
+			if ok2 then
+				local data = HttpService:JSONDecode(res2)
+				if data[1] and data[1].defs and data[1].defs[1] then
+					meaning = data[1].defs[1]:gsub("^%w+%s*", "")
+				end
+			end
+		end
+
+		if meaning then
+			Label.Text = word .. ":\n\n" .. meaning
+		else
+			Label.Text = word .. ":\n\nNo definition available."
+		end
+	end)
 end
 
 -- Word Suggestion Part --
@@ -120,17 +174,14 @@ local function Suggest(prefix)
 
 		B.MouseButton1Click:Connect(function()
 			Box.Text = w
-			Clear()
+			ShowMeaning(w)
 		end)
 
-		if amount >= 70 then break end -- Change the 50 but dont add too high or it will break --
+		if amount >= 70 then break end
 	end
-
-	List.CanvasSize = UDim2.new(0,0,0,UIList.AbsoluteContentSize.Y + 8)
 end
 
 -- Functional Detection --
 Box:GetPropertyChangedSignal("Text"):Connect(function()
 	Suggest(Box.Text)
 end)
-
